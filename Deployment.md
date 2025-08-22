@@ -21,3 +21,30 @@ You will create Deployment, this Deployment will roll out **Replica set**, And t
 
 Replica set will ensure to implement Auto Healing capability, If user define 3 Pod in Yaml manifest, Replica set ensure that there are 3 Pod and Keep an eye on the manifest with Auto Healing.
 
+## Write First Deployment
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  # this replica represent how many Pod you want to create
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      # Modify the container with yours
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+Eventually you have to create Pod through Deployment In order to Function like Auto Healing and Auto Scalling Active.
