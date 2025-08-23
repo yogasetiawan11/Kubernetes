@@ -1,6 +1,19 @@
 # Kubernetes
 # Kubernetes
 
+Structure file for Learning you can start from:
+- Kubernetes Architecture
+- Kubectl & Minikube
+- Kops
+- First Pod
+- Deployment
+- Service
+- Ingress
+- RBAC
+- Costume Resources
+- Config Maps
+- Monitoring
+
 ## What is Kubernetes?
 
 Kubernetes is an open-source container orchestration platform designed to automate the deployment, scaling, and management of containerized applications. It was developed by Google and is now maintained by the Cloud Native Computing Foundation (CNCF).
