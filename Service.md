@@ -40,4 +40,6 @@ This mode will expose you application to external world
 
 let's say you have deployed your app inside EKS, If you create a Load Balancer service then you will get an **Elastic Load balancing** IP address for your specific service so with this IP address anyone can access your app. 
 
-So anyone can access this sevice because It is created by Public IP.
+So anyone can access this sevice because It is created by Public IP. 
+
+So If there were no services concept in Kubernetes you would fail terribly even you have Auto Healing capabilty or even you have Deployment and your Application won't work for certain people, when the Application goes down It comes up with a new IP address, This is the Problem that Service solved.
