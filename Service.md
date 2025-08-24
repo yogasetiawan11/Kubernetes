@@ -43,3 +43,118 @@ let's say you have deployed your app inside EKS, If you create a Load Balancer s
 So anyone can access this sevice because It is created by Public IP. 
 
 So If there were no services concept in Kubernetes you would fail terribly even you have Auto Healing capabilty or even you have Deployment and your Application won't work for certain people, when the Application goes down It comes up with a new IP address, This is the Problem that Service solved.
+
+
+# Practical example
+A Step-by-Step Guide: Docker Image to Kubernetes Service
+This guide provides a clear, step-by-step process for deploying an application to Kubernetes. We will cover building a Docker image, pushing it to a registry, and then using Kubernetes manifests to create a Deployment and a Service.
+
+## Step 1: Prepare Your Application
+Before you containerize application, you need to have one ready. In This example I create simple Python web application that listens on a specific port.
+
+## Step 2: Create a Dockerfile
+A Dockerfile is a script that contains a series of instructions to build a Docker image. I specify the base image, copies your application code, installs dependencies, and also defines the command to run the application.
+
+This is my Docker file.
+```bash
+FROM ubuntu:latest
+
+# Set working directory in the Image
+WORKDIR /app
+
+# Copy the files from the host file system to The IMAGE file system
+COPY . /app
+
+# Install all necessary package, in this case we try run app python that require python
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Set environment variables
+ENV NAME world
+
+# Run a Command to start the application
+CMD ["python3", "app.py"]
+~                                 
+```
+
+## Step 3: Build the Docker Image
+Once my Dockerfile is ready, I can build the image using the docker build command. 
+
+```bash
+docker build -t yogasn/example-app:v1 .
+```
+
+## Step 4: Push the Image to a Registry
+A Docker registry (like Docker Hub or a private registry) is a centralized location for storing and distributing Docker images. Pushing your image to a registry makes it accessible for your Kubernetes cluster to pull and run.
+
+First, log in to your registry:
+
+docker login
+
+Then, push the image you just built:
+
+docker push your-username/my-app:1.0.0
+
+Step 5: Create a Kubernetes Deployment
+A Deployment is a Kubernetes object that manages a set of identical Pods. It ensures that a specified number of replicas of your application are running and handles updates and scaling. Create a file named deployment.yaml with the following content:
+
+## deployment.yaml
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+  labels:
+    app: my-app
+spec:
+  replicas: 3 # You can change this to the desired number of instances
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: your-username/my-app:1.0.0 # Use the image you pushed
+        ports:
+        - containerPort: 3000
+```
+## Step 6: Create a Kubernetes Service
+A Service is a Kubernetes object that defines a logical set of Pods and a policy to access them. It provides a stable IP address and DNS name, acting as a load balancer for your application.
+
+Create a file named service.yaml with the following content. This example uses NodePort, which exposes the service on each node's IP at a static port.
+
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+spec:
+  type: NodePort # Other types include ClusterIP and LoadBalancer
+  selector:
+    app: my-app # This links the service to your deployment's pods via the label
+  ports:
+    - protocol: TCP
+      port: 80 # The service's port
+      targetPort: 3000 # The container's port
+      nodePort: 30000 # A static port on each node (optional, for NodePort type)
+
+Step 7: Apply the Kubernetes Manifests
+With your YAML files ready, use the kubectl apply command to create the Deployment and Service on your cluster.
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+Step 8: Verify and Access the Service
+You can check the status of your resources with kubectl get commands:
+
+# Check the deployment and its pods
+kubectl get deployments
+kubectl get pods
+
+# Check the service
+kubectl get services
+
+To access your application, find the NodePort assigned to your service (if you used NodePort). The output of kubectl get services will show the port mapping (e.g., 80:30000/TCP). You can then access the app at http://<your-node-ip>:30000.
