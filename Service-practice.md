@@ -143,37 +143,48 @@ python-application   2/2     2            2           9m29s
 ## Step 6: Create a Kubernetes Service
 A Service is a Kubernetes object that defines a logical set of Pods and a policy to access them. It provides a stable IP address and DNS name, acting as a load balancer for your application.
 
-Create a file named service.yaml with the following content. This example uses NodePort, which exposes the service on each node's IP at a static port.
+I Create a file named service.yaml with the following content. This example uses NodePort, which exposes the service on each node's IP at a static port.
 
-# service.yaml
+service.yaml
+
+```bash
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
+  # this name can be anything
+  name: python-app
 spec:
-  type: NodePort # Other types include ClusterIP and LoadBalancer
+  type: NodePort
   selector:
-    app: my-app # This links the service to your deployment's pods via the label
+    # this is the default, selector you must change with selector's deployment file
+    # app.kubernetes.io/name: my-app
+    app: python-application
   ports:
-    - protocol: TCP
-      port: 80 # The service's port
-      targetPort: 3000 # The container's port
-      nodePort: 30000 # A static port on each node (optional, for NodePort type)
+    - port: 80
+      # Change the target Port which you're app running.
+      # because my app in docker using 8000
+      targetPort: 8000
+      nodePort: 30007
+```
 
-Step 7: Apply the Kubernetes Manifests
-With your YAML files ready, use the kubectl apply command to create the Deployment and Service on your cluster.
+Apply the Kubernetes Manifests With your YAML files ready, use the kubectl apply command to create the Deployment and Service on your cluster.
 
+```bash 
 kubectl apply -f deployment.yaml
+```
+```bash
 kubectl apply -f service.yaml
+```
+Verify and Access the Service You can check the status of your resources with kubectl get commands:
 
-Step 8: Verify and Access the Service
-You can check the status of your resources with kubectl get commands:
-
-# Check the deployment and its pods
+### Check the deployment and its pods
+```bash
 kubectl get deployments
 kubectl get pods
-
-# Check the service
 kubectl get services
+```
+To access your application, you have to ssh into your cluster In this case I am using Minikube so I can simply use ``minikube ssh`` then find the NodePort assigned to your service (if you used NodePort). The output of kubectl get services will show the port mapping 
+example, ``curl -L http://IP-service:30007/add-additional path if exist``
 
-To access your application, find the NodePort assigned to your service (if you used NodePort). The output of kubectl get services will show the port mapping (e.g., 80:30000/TCP). You can then access the app at http://<your-node-ip>:30000.
+The second way you can access with your IP cluster 
+example, ``curl -L http://Node-IP-address:30007`` 
