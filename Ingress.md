@@ -56,4 +56,4 @@ spec:
 ```
 
 
-If you're using Minikube You have to Update **vim etc/host** and add the Ingress IP address together.
+If you're using Minikube You have to Update **vim etc/host** and Provide the Ingress IP address with Domain example: 192.1.1.1 domain.
