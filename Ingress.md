@@ -26,28 +26,34 @@ With Ingress, you get:
 - Integration with Ingress Controllers 
 
 # How Ingress Works (Step by Step)
-## Prerequisite
+``Using Ingress controller`` In the Image named as (Ingress manage LoadBalancer), Then you create ``Ingress resource`` and Ingress controller will specify traffic of your Pods or Application.
 
-Ingress Controller
+Run this command to Install Ingress controller On Minikube (Local Cluster). 
+```bash
+minikube addons enable ingress
+```
 
-A pod (NGINX, F5, Traefik, HAProxy, or cloud-specific) that watches for Ingress resources.
+If you want to Ingress Controller for specific Ingress controller go to [documentation in Kubernetes](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/) Or you can directly search for On the Internet.
 
-It’s the actual “traffic cop” that handles routing.
 
-Ingress Resource
+```bash
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress # Change with your name
+spec:
+  rules:
+  - host: "foo.bar.com" # This is your Domain web
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/bar" # This is a Path In website
+        backend:
+          service:
+            name: service1 # Change with your K8s Service
+            port:
+              number: 80
+```
 
-A Kubernetes object (apiVersion: networking.k8s.io/v1) that defines rules:
 
-Which host → which service
-
-Which path → which service
-
-Flow Example
-
-User opens browser → https://myapp.com/api
-
-Request hits LoadBalancer → goes to Ingress Controller Pod
-
-Controller checks Ingress rules → routes to the correct Kubernetes Service
-
-Service forwards to backend Pods
+If you're using Minikube You have to Update **vim etc/host** and add the Ingress IP address together.
