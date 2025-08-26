@@ -3,7 +3,7 @@
 Ingress in Kubernetes is like a traffic controller for your cluster. Instead of use service stand alone to exposing each service with a NodePort or LoadBalancer, Ingress provides a central entry point to manage HTTP/HTTPS traffic into your cluster.
 
 
-<img width="1135" height="1100" alt="Image" src="https://github.com/user-attachments/assets/a0e48d38-858e-4f04-b4cd-bde882a7da1d" />
+<img width="815" height="332" alt="Image" src="https://github.com/user-attachments/assets/9709538f-0d36-4d33-8d37-02fe36e2597b" />
 
 
 Think of it as a reverse proxy + router that sits in front of your apps.
