@@ -1,6 +1,6 @@
 # Architechture in Kubernetes
 
-<img width="700" height="700" alt="Image" src="https://github.com/user-attachments/assets/0160564d-f7a8-441c-abc0-a5a29f9a461e" />
+<img width="943" height="568" alt="Image" src="https://github.com/user-attachments/assets/c114997a-bcb2-4eba-b551-8f60f5f2c1f4" />
 
 # Kubernetes Architecture
 
