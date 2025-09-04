@@ -1,4 +1,4 @@
-# what is costume resources
+# What is costume resources
 Costume Resource are extention of The Kubernetes Cluster API
 
 Let’s say you have a Kubernetes cluster. By default, the cluster provides several built-in resources such as Deployments, Services, ConfigMaps, and Secrets. These are native Kubernetes resources that work out of the box.
@@ -6,8 +6,7 @@ Let’s say you have a Kubernetes cluster. By default, the cluster provides seve
 However, if you want to go beyond these built-in resources, Kubernetes also allows you to extend its functionality by defining new custom resources. 
 
 For example, if you want to extend the capability or extend API and implement GitOps in your Kubernetes cluster, you need CRD, CR, Costume Controller.
-
-First step user will 
+ 
 There are 3 resource to extend capability (API)
 
 1. CR (Costume Resource)
