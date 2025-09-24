@@ -55,7 +55,12 @@ spec:
               number: 80
 ```
 
+Before you use this Ingress by default It won't work properly because you haven't installed **Ingress Controller** so you can proceed Intallation Ingress Controller using this command:
+## Minikube
+```bash
+minikube addons enable ingress
+```
 
-If you're using Minikube You have to Update **vim etc/host** and Provide the Ingress IP address with Domain example: 192.1.1.1 domain.
+If you're using Minikube You have to Update **vim etc/host** and Provide the Ingress IP address with Domain example: 192.1.1.1 <<your-domain>>.
 
-This Prerequisite for local cluster only. In production you don't need this thing you can simply Provide company's Domain into ``Ingress.yaml`` file
+This Prerequisite for local cluster only. In production you don't need to change the file above you can proceed with Installation and look for the Ingress controller directly on browser.

@@ -1,7 +1,7 @@
 # What is service in Kubernetes
 A Kubernetes Service is an abstraction layer which defines a logical set of Pods and enables external traffic exposure, load balancing and service discovery for those Pods.
 
-When you create, destroy and replace the Pods come up with Their Default IP adresses all of the IP addresses are not stable (Always change), Because of this service acs as an abstraction layer that defines a logical set of pods and a policy to access them.
+When you create, destroy and replace. the Pods come up with Their Default IP adresses all of the IP addresses are not stable (Always change), Because of this service acs as an abstraction layer that defines a logical set of pods and a policy to access them.
 
 Service offers your 3 advantages that is Load Balancing, Service Discovery, Expose your app to the World
 
@@ -105,26 +105,25 @@ apiVersion: apps/v1
 kind: Deployment
 # Ensure the name of label and selector are same
 metadata:
-  name: python-application
+  name: python-application  # this name can be anything
   labels:
-    app: python-application
+    app: python-application  # This is the label you will use in SVC
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: python-application
+      app: python-application  # This is the selector you will use in SVC
   template:
     metadata:
       labels:
-        app: python-application
+        app: python-application  # This is the label you will use in SVC
     spec:
 
       containers:
-      - name: python-app
-        image: yogas4/python-app:v1
+      - name: python-app  # this name can be anything
+        image: yogas4/python-app:v1  # this image you've to specify with your app's image
         ports:
-        # attach with app's Port
-        - containerPort: 8000
+        - containerPort: 8000  # you can get this port on your app (Dockerfile)
 ```
 
 Apply the script with:
@@ -151,17 +150,16 @@ service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  # this name can be anything
-  name: python-app
+  name: python-app  # this name can be anything
 spec:
   type: NodePort
   selector:
-    # this is the default, selector you must change with selector's deployment file
+    # this is the default, selector you must change with selector in the deployment file
     # app.kubernetes.io/name: my-app
     app: python-application
   ports:
     - port: 80
-      # Change the target Port which you're app running.
+      # Change the target Port which you're app is running.
       # because my app in docker using 8000
       targetPort: 8000
       nodePort: 30007
@@ -204,8 +202,7 @@ This will show yml file about your script. all you need to do, change the syntax
   selector:
     app: python-application
   sessionAffinity: None
-  type: NodePort
-  # change this to LoadBalancer
+  type: NodePort   # change this to LoadBalancer
 status:
   loadBalancer: {}
 ```
