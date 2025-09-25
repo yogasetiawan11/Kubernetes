@@ -23,3 +23,49 @@ In ingress if you are just deploy Ingress resource without controller nothing wi
 
 
 Custom Resource Definitions (CRDs), Custom Resources (CRs), and Custom Controllers work together to extend the Kubernetes API and automate the management of custom applications or infrastructure. The CRD defines the resource type, The CR is an instance of that type, The Controller watches for changes to CRs and reconciles them (performs actions, creates other resources, etc.)
+
+
+# Extend Kubernetes with Istio
+## Prerequisites
+1. Check the Platform-Specific.[Prerequisites](https://istio.io/latest/docs/ambient/install/platform-prerequisites/)
+
+2. Install the Helm client, version 3.6 or above.
+
+3. Configure the Helm repository:
+```bash
+$ helm repo add istio https://istio-release.storage.googleapis.com/charts
+$ helm repo update
+```
+
+## Base components
+The base chart contains the basic CRDs and cluster roles required to set up Istio. This should be installed prior to any other Istio component.
+
+```bash  
+$ helm install istio-base istio/base -n istio-system --create-namespace --wait
+```
+
+## istiod control plane
+The istiod chart installs a revision of Istiod. Istiod is the control plane component that manages and configures the proxies to route traffic within the mesh.
+
+```bash 
+$ helm install istiod istio/istiod --namespace istio-system --set profile=ambient --wait
+```
+
+## CNI node agent
+The cni chart installs the Istio CNI node agent. It is responsible for detecting the pods that belong to the ambient mesh, and configuring the traffic redirection between pods and the ztunnel node proxy (which will be installed later).
+
+```bash 
+$ helm install istio-cni istio/cni -n istio-system --set profile=ambient --wait
+```
+
+## ztunnel DaemonSet
+The ztunnel chart installs the ztunnel DaemonSet, which is the node proxy component of Istio’s ambient mode.
+
+```bash 
+$ helm install ztunnel istio/ztunnel -n istio-system --wait
+```
+
+## Verify the installation 
+```bash
+$ helm ls -n istio-system
+```

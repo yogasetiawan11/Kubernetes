@@ -12,3 +12,65 @@ Both of them are used to store the Information. ``ConfigMap`` Stores data in pla
 
 with Secret the data is encrypted at rest, with Secret you can enforce strong RBAC, so for the entire Secret resource In Kubernetes you can say only Devops Engineer should have access to The Secret or this technique also known as ``Least Privillage``. 
 
+## Example Config Map
+In this example I'll store my sql Data Base Inside Config Map
+1. Create cm File ``vim cm.yml`` Inside this file in ``data`` you can fill it with The information like Database Port, etc.
+
+```bash
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  db-port: "3306"
+```
+
+2. apply the file above
+```bash
+kubectl apply -f cm.yml
+kubectl get cm                       # List all config map
+kubectl describe cm <name-cm>        # To see the data inside Config Map
+```
+
+3. Afterwards you can configure this Information (Config Map) with your Deployment 
+
+This is default example of Deployment in kubernetes 
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        env:                  # Here you atach env to configure with CM
+         - name: DB-PORT      # This should be the name of Environment variable
+           value From:
+            configMapKeyRef:
+             name: test-cm    # you should attach your CM which contain the DB-port
+             key: db-port     # Fill with the data name in The CM
+        ports:
+        - containerPort: 80
+```
+
+4. To test this CM, first login to your Pods 
+```bash
+exec it <name of the Pods> -- /bin/bash
+
+# Inside the pods check the value 
+
+env | grep DB-PORT
+``` 
+
