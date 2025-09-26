@@ -31,3 +31,143 @@ RoleBinding: A RoleBinding links a user, group, or service account to a Role wit
 
 ClusterRoleBinding: A ClusterRoleBinding links a user, group, or service account to a ClusterRole across the entire cluster. This is how you grant cluster-wide administrative permissions to a subject. For example, to give a user permission to view all nodes, you would use a ClusterRoleBinding that references a ClusterRole with get permissions on nodes.
 
+# Example yaml file about RBAC
+```bash
+# This creates a ServiceAccount named "admin" in the default namespace
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: default
+  name: admin
+---
+# This defines a ClusterRole named "admin-role"
+# ClusterRole gives permissions at the cluster-wide level (not just one namespace)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: admin-role
+rules:
+- apiGroups: ["*"]        # "*" means all API groups
+  resources: ["*"]        # "*" means all resources (pods, deployments, services, etc.)
+  verbs: ["*"]            # "*" means all actions (get, list, create, delete, update, etc.)
+---
+# This binds the "admin-role" ClusterRole to the "admin" ServiceAccount
+# ClusterRoleBinding is used to connect ClusterRole permissions to a user or service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io  # API group for RBAC
+  kind: ClusterRole                     # The type of role we're binding
+  name: admin-role                      # The ClusterRole being referenced
+subjects:
+- kind: ServiceAccount                  # The subject type: ServiceAccount
+  name: admin                           # The name of the ServiceAccount
+  namespace: default                    # The namespace where the ServiceAccount lives
+
+```
+
+# Example step by step
+
+# Creating service account
+
+```bash
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: webapps
+```
+
+# Create Role
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-role
+  namespace: webapps
+rules:
+  - apiGroups:
+        - ""
+        - apps
+        - autoscaling
+        - batch
+        - extensions
+        - policy
+        - rbac.authorization.k8s.io
+    resources:
+      - pods
+      - componentstatuses
+      - configmaps
+      - daemonsets
+      - deployments
+      - events
+      - endpoints
+      - horizontalpodautoscalers
+      - ingress
+      - jobs
+      - limitranges
+      - namespaces
+      - nodes
+      - secrets
+      - pods
+      - persistentvolumes
+      - persistentvolumeclaims
+      - resourcequotas
+      - replicasets
+      - replicationcontrollers
+      - serviceaccounts
+      - services
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+```
+
+# Bind the Role with 
+
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-rolebinding
+  namespace: webapps 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app-role 
+subjects:
+- namespace: webapps 
+  kind: ServiceAccount
+  name: jenkins 
+```
+
+# Create Cluster role & bind to Service Account
+
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-cluster-role
+rules:
+- apiGroups: [""]
+  resources: ["persistentvolumes"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: webapps
+roleRef:
+  kind: ClusterRole
+  name: jenkins-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+
+  ```
+
+# Generate Token
+

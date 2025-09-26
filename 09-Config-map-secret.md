@@ -55,22 +55,24 @@ spec:
       containers:
       - name: nginx
         image: nginx:1.14.2
-        env:                  # Here you atach env to configure with CM
+        env:                  # attach env to configure with CM
          - name: DB-PORT      # This should be the name of Environment variable
-           value From:
+           valueFrom:
             configMapKeyRef:
-             name: test-cm    # you should attach your CM which contain the DB-port
-             key: db-port     # Fill with the data name in The CM
+             name: test-cm    # Fill it with file name of CM 
+             key: db-port     # Fill it with the data name in The CM
         ports:
         - containerPort: 80
 ```
 
 4. To test this CM, first login to your Pods 
 ```bash
-exec it <name of the Pods> -- /bin/bash
+kubectl exec -it <name of the Pods> -- /bin/bash
 
 # Inside the pods check the value 
 
 env | grep DB-PORT
 ``` 
 
+# Generate token using service account in the namespace
+[click this link](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#:~:text=To%20create%20a%20non%2Dexpiring,with%20that%20generated%20token%20data.)
